@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+//CapitalCase (PascalCase) → used for Models (like Factory, Worker, Machine).
+//model Factory { ... }
+//model Worker { ... }
+//model Machine { ... }
+//lowercase (camelCase or plural form) → used for fields inside a model (like workers, machines, factoryId).
+//workers Worker[]
+//machines Machine[]
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Factory {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  location String
+  workers  Worker[]
+  machines Machine[]
+}
+
+model Worker {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  role      String
+  factory   Factory  @relation(fields: [factoryId], references: [id])
+  factoryId String   @db.ObjectId
+}
+
+
+
+model Machine {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  status    String
+  factory   Factory  @relation(fields: [factoryId], references: [id])
+  factoryId String   @db.ObjectId
+}
